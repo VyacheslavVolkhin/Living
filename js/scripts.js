@@ -2,9 +2,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	//fancybox
 	Fancybox.bind("[data-fancybox]", {
-		//settings
 		backFocus: false,
-  		placeFocusBack: false,
+		placeFocusBack: false,
 		Carousel: {
 			Thumbs: {
 				type: "classic",
@@ -29,55 +28,53 @@ document.addEventListener("DOMContentLoaded", function() {
 	let tglButtons = document.querySelectorAll('.js-btn-tgl')
 	let addButtons = document.querySelectorAll('.js-btn-add')
 	let buttonsTglOne = document.querySelectorAll('.js-btn-tgl-one');
-	for (i = 0;i < tglButtons.length;i++) {
-		tglButtons[i].addEventListener('click', function(e) {
-			this.classList.contains('active') ? this.classList.remove('active') : this.classList.add('active')
+
+	document.addEventListener('click', function(e) {
+		const tglBtn = e.target.closest('.js-btn-tgl');
+		if (tglBtn) {
+			tglBtn.classList.contains('active') ? tglBtn.classList.remove('active') : tglBtn.classList.add('active')
 			e.preventDefault()
 			return false
-		})
-	}
-	for (i = 0;i < addButtons.length;i++) {
-		addButtons[i].addEventListener('click', function(e) {
-			if (!this.classList.contains('active')) {
-				this.classList.add('active');
+		}
+
+		const addBtn = e.target.closest('.js-btn-add');
+		if (addBtn) {
+			if (!addBtn.classList.contains('active')) {
+				addBtn.classList.add('active');
 				e.preventDefault()
 				return false
 			}
-		})
-	}
-	buttonsTglOne.forEach(function(button) {
-		button.addEventListener('click', function(e) {
+		}
+
+		const tglOneBtn = e.target.closest('.js-btn-tgl-one');
+		if (tglOneBtn) {
 			e.preventDefault();
-			let toggleButtonsWrap = this.closest('.js-toggle-buttons');
-	
-			if (this.classList.contains('active')) {
-				this.classList.remove('active');
+			let toggleButtonsWrap = tglOneBtn.closest('.js-toggle-buttons');
+
+			if (tglOneBtn.classList.contains('active')) {
+				tglOneBtn.classList.remove('active');
 			} else {
 				toggleButtonsWrap.querySelectorAll('.js-btn-tgl-one').forEach(function(btn) {
 					btn.classList.remove('active');
 				});
-				this.classList.add('active');
+				tglOneBtn.classList.add('active');
 			}
 			return false;
-		});
+		}
 	});
 
 
 	// filter actions
-	const filterButtonOpen = document.querySelector('.js-filter-open');
-	const filterButtonClose = document.querySelector('.js-filter-close');
-	if (filterButtonOpen) {
-		filterButtonOpen.addEventListener("click", function(event) {
-				document.body.classList.add("filter-show");
-				event.preventDefault();
-		})
-	}
-	if (filterButtonClose) {
-		filterButtonClose.addEventListener("click", function(event) {
-				document.body.classList.remove("filter-show");
-				event.preventDefault();
-		})
-	}
+	document.addEventListener('click', function(event) {
+		if (event.target.closest('.js-filter-open')) {
+			document.body.classList.add("filter-show");
+			event.preventDefault();
+		}
+		if (event.target.closest('.js-filter-close')) {
+			document.body.classList.remove("filter-show");
+			event.preventDefault();
+		}
+	});
 
 	//mask phone
 	let telInputs = document.querySelectorAll('input[type="tel"]:not(.frm-field-phone input[type="tel"])');
@@ -85,34 +82,40 @@ document.addEventListener("DOMContentLoaded", function() {
 		let im = new Inputmask("+7 (999) 999-99-99");
 		im.mask(telInputs);
 	}
-    const phoneInput = document.querySelector('input[type="tel"]');
-	const emailInput = document.querySelector('input[type="email"]');
-    if (phoneInput) {
-        const phoneContainer = phoneInput.closest('.frm-field-input');
 
-        phoneInput.addEventListener('input', function() {
-            const digits = this.value.replace(/\D/g, '');
-            const isValid = digits.length === 11;
-            updateValidationClass(phoneContainer, isValid);
-        });
-    }
-    if (emailInput) {
-        const emailContainer = emailInput.closest('.frm-field-input');
-        
-        emailInput.addEventListener('input', function() {
-            const email = this.value.trim();
-            const isValid = validateEmail(email);
-            
-            updateValidationClass(emailContainer, isValid);
-        });
-        
-        emailInput.addEventListener('blur', function() {
-            const email = this.value.trim();
-            const isValid = validateEmail(email);
-            
-            updateValidationClass(emailContainer, isValid);
-        });
-    }
+	document.addEventListener('input', function(event) {
+		if (event.target.matches('input[type="tel"]') && !event.target.closest('.frm-field-phone')) {
+			const phoneContainer = event.target.closest('.frm-field-input');
+			if (phoneContainer) {
+				const digits = event.target.value.replace(/\D/g, '');
+				const isValid = digits.length === 11;
+				updateValidationClass(phoneContainer, isValid);
+			}
+		}
+	});
+
+	document.addEventListener('input', function(event) {
+		if (event.target.matches('input[type="email"]')) {
+			const emailContainer = event.target.closest('.frm-field-input');
+			if (emailContainer) {
+				const email = event.target.value.trim();
+				const isValid = validateEmail(email);
+				updateValidationClass(emailContainer, isValid);
+			}
+		}
+	});
+
+	document.addEventListener('blur', function(event) {
+		if (event.target.matches('input[type="email"]')) {
+			const emailContainer = event.target.closest('.frm-field-input');
+			if (emailContainer) {
+				const email = event.target.value.trim();
+				const isValid = validateEmail(email);
+				updateValidationClass(emailContainer, isValid);
+			}
+		}
+	}, true);
+
 	function updateValidationClass(container, isValid) {
 		const input = container.querySelector('input');
 		const hasValue = input.value.trim().length > 0;
@@ -128,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 		} else {
 			container.classList.remove('inp-verify', 'inp-autofilled');
-			
+
 			if (hasValue) {
 				container.classList.add('inp-error');
 			} else {
@@ -136,30 +139,21 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 		}
 	}
-    function validateEmail(email) {
-        if (!email) return false;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
+	function validateEmail(email) {
+		if (!email) return false;
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		return emailRegex.test(email);
+	}
 
-
-	
-
-	
 
 	//js popup wrap
-	const togglePopupButtons = document.querySelectorAll('.js-btn-popup-toggle')
-	const closePopupButtons = document.querySelectorAll('.js-btn-popup-close')
-	const popupElements = document.querySelectorAll('.js-popup-wrap')
-
 	function popupElementsClear() {
 		document.body.classList.remove('menu-show')
-		//document.body.classList.remove('filter-show')
 		document.body.classList.remove('search-show')
-		popupElements.forEach(element => element.classList.remove('popup-right'))
+		document.querySelectorAll('.js-popup-wrap').forEach(element => element.classList.remove('popup-right'))
 	}
 	function popupElementsClose() {
-		togglePopupButtons.forEach(element => {
+		document.querySelectorAll('.js-btn-popup-toggle').forEach(element => {
 			if (window.innerWidth < 1024) {
 				if (!element.closest('.no-close-mobile') && !element.closest('.no-close')) {
 					element.classList.remove('active')
@@ -174,80 +168,13 @@ document.addEventListener("DOMContentLoaded", function() {
 					element.classList.remove('active')
 				}
 			}
-			
+
 		})
 	}
-	popupElements.forEach(element => {
-		if (element.classList.contains('js-popup-select')) {
-			let popupElementSelectItem = element.querySelectorAll('.js-popup-block li a')
-
-			// select phone country
-			// function updatePhoneInputPlaceholder(selectElement) {
-			// 	const phoneFieldWrapper = selectElement.closest('.frm-field-phone');
-				
-			// 	if (phoneFieldWrapper) {
-			// 		const activeButton = selectElement.querySelector('.js-popup-block .active');
-					
-			// 		if (activeButton) {
-			// 			const placeholderElement = activeButton.querySelector('.button-placeholder');
-						
-			// 			if (placeholderElement) {
-			// 				const phoneInput = phoneFieldWrapper.querySelector('.form-input');
-							
-			// 				if (phoneInput) {
-			// 					phoneInput.placeholder = placeholderElement.textContent;
-			// 				}
-			// 			}
-			// 		}
-			// 	}
-			// }
-			
-			if (element.querySelector('.js-popup-block .active')) {
-				element.classList.add('select-active')
-				let popupElementActive = element.querySelector('.js-popup-block .active').innerHTML
-				let popupElementButton = element.querySelector('.js-btn-popup-toggle')
-				popupElementButton.innerHTML = ''
-				popupElementButton.insertAdjacentHTML('beforeend', popupElementActive)
-
-				//updatePhoneInputPlaceholder(element);
-			} else {
-				element.classList.remove('select-active')
-			}
-			for (i = 0; i < popupElementSelectItem.length; i++) {
-				popupElementSelectItem[i].addEventListener('click', function (e) {
-					const currentSelect = this.closest('.js-popup-select');
-					
-					currentSelect.closest('.js-popup-wrap').classList.add('select-active');
-					
-					if (currentSelect.querySelector('.js-popup-block .active')) {
-						currentSelect.querySelector('.js-popup-block .active').classList.remove('active');
-					}
-					
-					this.classList.add('active');
-					
-					let popupElementActive = currentSelect.querySelector('.js-popup-block .active').innerHTML;
-					let popupElementButton = currentSelect.querySelector('.js-btn-popup-toggle');
-					popupElementButton.innerHTML = '';
-					popupElementButton.insertAdjacentHTML('beforeend', popupElementActive);
-					
-					// updatePhoneInputPlaceholder(currentSelect);
-					
-					popupElementsClear();
-					popupElementsClose();
-					
-					if (!this.closest('.js-tabs-nav')) {
-						e.preventDefault();
-						e.stopPropagation();
-						return false;
-					}
-				});
-			}
-		}
-	})
 	function popupElementsContentPositionClass() {
 		const wrapEl = document.querySelector('.wrap')
 		const wrapWidth = wrapEl ? wrapEl.offsetWidth : 0
-		popupElements.forEach(element => {
+		document.querySelectorAll('.js-popup-wrap').forEach(element => {
 			let pLeft = element.offsetLeft
 			let pWidth = element.querySelector('.js-popup-block').offsetWidth
 			let pMax = pLeft + pWidth;
@@ -258,147 +185,130 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 		})
 	}
-	for (let i = 0; i < togglePopupButtons.length; i++) {
-		togglePopupButtons[i].addEventListener('click', function (e) {
+
+	document.addEventListener('click', function(e) {
+		const toggleBtn = e.target.closest('.js-btn-popup-toggle');
+		if (toggleBtn) {
 			popupElementsClear()
-			if (this.classList.contains('active')) {
-				this.classList.remove('active')
+			if (toggleBtn.classList.contains('active')) {
+				toggleBtn.classList.remove('active')
 			} else {
 				popupElementsClose()
-				this.classList.add('active')
-				if (this.closest('.popup-menu-wrap')) {
+				toggleBtn.classList.add('active')
+				if (toggleBtn.closest('.popup-menu-wrap')) {
 					document.body.classList.add('menu-show')
 				}
-				if (this.closest('.popup-search-wrap')) {
+				if (toggleBtn.closest('.popup-search-wrap')) {
 					document.body.classList.add('search-show')
 				}
-				if (this.closest('.popup-filter-wrap')) {
+				if (toggleBtn.closest('.popup-filter-wrap')) {
 					document.body.classList.add('filter-show')
 				}
 				popupElementsContentPositionClass()
 			}
 			e.preventDefault()
 			return false
-		})
-	}
-	for (let i = 0; i < closePopupButtons.length; i++) {
-		closePopupButtons[i].addEventListener('click', function (e) {
+		}
+
+		const closeBtn = e.target.closest('.js-btn-popup-close');
+		if (closeBtn) {
 			popupElementsClear()
 			popupElementsClose()
 			e.preventDefault()
 			return false;
-		})
-	}
-	document.onclick = function (event) {
-		if (!event.target.closest('.js-popup-block') && !event.target.closest('.js-btn-popup-toggle')) {
+		}
+
+		if (!e.target.closest('.js-popup-block') && !e.target.closest('.js-btn-popup-toggle')) {
 			popupElementsClear()
 			popupElementsClose()
 		}
-	}
-	popupElements.forEach(element => {
-		if (element.classList.contains('js-popup-select')) {
-			let popupElementSelectItem = element.querySelectorAll('.js-popup-block li a')
-			if (element.querySelector('.js-popup-block .active')) {
-				element.classList.add('select-active')
-				let popupElementActive = element.querySelector('.js-popup-block .active').innerHTML
-				let popupElementButton = element.querySelector('.js-btn-popup-toggle')
-				popupElementButton.innerHTML = ''
-				popupElementButton.insertAdjacentHTML('beforeend', popupElementActive)
-			} else {
-				element.classList.remove('select-active')
+	});
+
+	document.addEventListener('click', function(e) {
+		const selectItem = e.target.closest('.js-popup-select .js-popup-block li a');
+		if (selectItem) {
+			const currentSelect = selectItem.closest('.js-popup-select');
+			currentSelect.closest('.js-popup-wrap').classList.add('select-active');
+
+			if (currentSelect.querySelector('.js-popup-block .active')) {
+				currentSelect.querySelector('.js-popup-block .active').classList.remove('active');
 			}
-			for (let i = 0; i < popupElementSelectItem.length; i++) {
-				popupElementSelectItem[i].addEventListener('click', function (e) {
-					this.closest('.js-popup-wrap').classList.add('select-active')
-					if (this.closest('.js-popup-wrap').querySelector('.js-popup-block .active')) {
-						this.closest('.js-popup-wrap').querySelector('.js-popup-block .active').classList.remove('active')
-					}
-					this.classList.add('active')
-					let popupElementActive = element.querySelector('.js-popup-block .active').innerHTML
-					let popupElementButton = element.querySelector('.js-btn-popup-toggle')
-					popupElementButton.innerHTML = ''
-					popupElementButton.insertAdjacentHTML('beforeend', popupElementActive)
-					popupElementsClear()
-					popupElementsClose()
-					if (!this.closest('.js-tabs-nav')) {
-						e.preventDefault()
-						return false
-					}
-				})
+
+			selectItem.classList.add('active');
+
+			let popupElementActive = currentSelect.querySelector('.js-popup-block .active').innerHTML;
+			let popupElementButton = currentSelect.querySelector('.js-btn-popup-toggle');
+			popupElementButton.innerHTML = '';
+			popupElementButton.insertAdjacentHTML('beforeend', popupElementActive);
+
+			popupElementsClear();
+			popupElementsClose();
+
+			if (!selectItem.closest('.js-tabs-nav')) {
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
 			}
 		}
-	})
-
+	});
 
 	//js tabs
-	const tabsNav = document.querySelectorAll('.js-tabs-nav')
-	const tabsBlocks = document.querySelectorAll('.js-tab-block')
-	const tabsButtonTitle = document.querySelectorAll('.js-tab-title')
-	const tabsButtonContent = document.querySelectorAll('.js-tab-content')
-	const tabActivateButtons = document.querySelectorAll('[data-tab-activate]')
 	function tabsActiveStart() {
-		for (iTab = 0; iTab < tabsBlocks.length; iTab++) {
-			if (tabsBlocks[iTab].classList.contains('active')) {
-				tabsBlocks[iTab].classList.remove('active')
+		document.querySelectorAll('.js-tab-block').forEach(block => {
+			if (block.classList.contains('active')) {
+				block.classList.remove('active')
 			}
-		}
-		for (i = 0; i < tabsNav.length; i++) {
-			let tabsNavElements = tabsNav[i].querySelectorAll('[data-tab]')
-			for (iElements = 0; iElements < tabsNavElements.length; iElements++) {
+		})
+		document.querySelectorAll('.js-tabs-nav').forEach(nav => {
+			let tabsNavElements = nav.querySelectorAll('[data-tab]')
+			for (let iElements = 0; iElements < tabsNavElements.length; iElements++) {
 				if (tabsNavElements[iElements].classList.contains('active')) {
 					let tabsNavElementActive = tabsNavElements[iElements].dataset.tab
-					for (j = 0; j < tabsBlocks.length; j++) {
-						if (tabsBlocks[j].dataset.tab.toString().split(' ').indexOf(tabsNavElementActive) > -1) {
-							tabsBlocks[j].classList.add('active')
+					document.querySelectorAll('.js-tab-block').forEach(block => {
+						if (block.dataset.tab.toString().split(' ').indexOf(tabsNavElementActive) > -1) {
+							block.classList.add('active')
 						}
-					}
+					})
 				}
 			}
-		}
-		
+		})
 	}
-	for (i = 0; i < tabsButtonTitle.length; i++) {
-		tabsButtonTitle[i].addEventListener('click', function (e) {
-			this.classList.toggle('active')
+
+	document.addEventListener('click', function(e) {
+		const tabTitle = e.target.closest('.js-tab-title');
+		if (tabTitle) {
+			tabTitle.classList.toggle('active')
 			e.preventDefault()
-			//e.stopPropagation()
 			return false
-		})
-	}
-	for (i = 0; i < tabsNav.length; i++) {
-		tabsNav[i].addEventListener('click', function (e) {
-			if (e.target.closest('[data-tab]')) {
-				let tabsNavElements = this.querySelector('[data-tab].active')
-				tabsNavElements ? tabsNavElements.classList.remove('active') : false
-				e.target.closest('[data-tab]').classList.add('active')
-				tabsActiveStart()
-				e.preventDefault()
-				//e.stopPropagation()
-				return false
-			}
-		})
-	}
-	for (i = 0; i < tabActivateButtons.length; i++) {
-		tabActivateButtons[i].addEventListener('click', function (e) {
-			//e.preventDefault()
-			const targetTab = this.dataset.tabActivate
+		}
+
+		const tabNav = e.target.closest('.js-tabs-nav');
+		if (tabNav && e.target.closest('[data-tab]')) {
+			let tabsNavElements = tabNav.querySelector('[data-tab].active')
+			tabsNavElements ? tabsNavElements.classList.remove('active') : false
+			e.target.closest('[data-tab]').classList.add('active')
+			tabsActiveStart()
+			e.preventDefault()
+			return false
+		}
+
+		const activateBtn = e.target.closest('[data-tab-activate]');
+		if (activateBtn) {
+			const targetTab = activateBtn.dataset.tabActivate
 			const targetButton = document.querySelector(`[data-tab="${targetTab}"]`)
 			if (targetButton) {
 				targetButton.click()
 			}
 			return false
-		})
-	}
+		}
+	});
+
 	tabsActiveStart()
 
 
-
-
 	// Popups
-	let popupCurrent;
-	let popupsList = document.querySelectorAll('.popup-outer-box');
 	let popupTimer = null;
-	
+
 	document.addEventListener("click", function(e) {
 		const openButton = e.target.closest(".js-popup-open");
 		if (openButton) {
@@ -408,12 +318,12 @@ document.addEventListener("DOMContentLoaded", function() {
 				clearTimeout(popupTimer);
 				popupTimer = null;
 			}
-			for (let i = 0; i < popupsList.length; i++) {
-				popupsList[i].classList.remove("active");
-			}
-			popupCurrent = openButton.getAttribute("data-popup");
+			document.querySelectorAll('.popup-outer-box').forEach(el => el.classList.remove("active"));
+			const popupCurrent = openButton.getAttribute("data-popup");
 			const popupElement = document.querySelector(`.popup-outer-box[id="${popupCurrent}"]`);
-			popupElement.classList.add("active");
+			if (popupElement) {
+				popupElement.classList.add("active");
+			}
 			const timerValue = openButton.getAttribute("data-popup-timer");
 			if (timerValue) {
 				const timerMs = parseInt(timerValue);
@@ -421,7 +331,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					popupTimer = setTimeout(function() {
 						document.body.classList.remove("popup-open");
 						document.body.classList.remove("popup-open-scroll");
-						popupElement.classList.remove("active");
+						if (popupElement) popupElement.classList.remove("active");
 						popupTimer = null;
 					}, timerMs);
 				}
@@ -437,9 +347,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				popupTimer = null;
 			}
 			document.body.classList.remove("popup-open");
-			for (let i = 0; i < popupsList.length; i++) {
-				popupsList[i].classList.remove("active");
-			}
+			document.querySelectorAll('.popup-outer-box').forEach(el => el.classList.remove("active"));
 			e.preventDefault();
 			e.stopPropagation();
 		}
@@ -466,42 +374,19 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	};
 
-	// open popup 
-	//openPopupMessage('#popup-callback');
-
-	// close popup
-	//closePopup('popup-callback');
-
-	// document.querySelectorAll(".popup-outer-box").forEach(function (element) {
-	// 	element.addEventListener("click", function (event) {
-	// 		if (!event.target.closest(".popup-box")) {
-	// 		if (popupTimer) {
-	// 			clearTimeout(popupTimer);
-	// 			popupTimer = null;
-	// 		}
-			
-	// 		document.body.classList.remove("popup-open");
-	// 		document.body.classList.remove("popup-open-scroll");
-	// 		document.querySelectorAll(".popup-outer-box").forEach(function (e) {
-	// 			e.classList.remove("active");
-	// 		});
-	// 		return false;
-	// 		}
-	// 	});
-	// });
 
 	//slider
 	const sliderstiles = document.querySelectorAll(".slider-tiles");
-	
+
 	sliderstiles.forEach((container) => {
 		const swiperEl = container.querySelector(".swiper");
 		const paginationEl = container.querySelector(".slider-tiles-pagination");
 		const nextEl = container.querySelector(".button-slider-tiles-next");
 		const prevEl = container.querySelector(".button-slider-tiles-prev");
-	
+
 		if (!swiperEl) return;
 		const hasAutoHeight = container.dataset.height === "auto";
-	
+
 		new Swiper(swiperEl, {
 			loop: false,
 			slidesPerGroup: 1,
@@ -512,12 +397,6 @@ document.addEventListener("DOMContentLoaded", function() {
 			pagination: {
 				el: paginationEl,
 				clickable: true,
-				//type: 'progressbar',
-				// renderBullet: function (index, className) {
-				// 	const slideEl = this.slides[index];
-				// 	const title = slideEl?.getAttribute("data-title") || index + 1;
-				// 	return `<span class="${className}">${title}</span>`;
-				// },
 			},
 			autoplay: false,
 			navigation: {
@@ -570,7 +449,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		const nextTBtn = container.querySelector('.button-slider-photos-thumbs-next');
 		const prevTBtn = container.querySelector('.button-slider-photos-thumbs-prev');
 		const mainPag = container.querySelector('.slider-photos-main-pagination');
-	
+
 		const swiperPhotosPreview = new Swiper(thumbsEl, {
 			loop: false,
 			slidesPerGroup: 1,
@@ -614,7 +493,6 @@ document.addEventListener("DOMContentLoaded", function() {
 	});
 
 
-	
 	//slider test
 	const sliderstest = document.querySelectorAll(".slider-test");
 
@@ -661,17 +539,15 @@ document.addEventListener("DOMContentLoaded", function() {
 		});
 
 
-		// Делегирование кликов: ловим клики по кнопкам внутри слайдов
 		swiperEl.addEventListener("click", (e) => {
 			const nextBtn = e.target.closest(".slider-button-next");
 			const prevBtn = e.target.closest(".slider-button-prev");
-		
+
 			if (nextBtn) {
 				e.preventDefault();
-		
-				// Проверяем, последний ли это слайд
+
 				const isLastSlide = swiper.activeIndex === swiper.slides.length - 1;
-		
+
 				if (isLastSlide) {
 					const pageFull = document.querySelector(".page-full");
 					if (pageFull) pageFull.classList.add("results-active");
@@ -679,14 +555,13 @@ document.addEventListener("DOMContentLoaded", function() {
 					swiper.slideNext();
 				}
 			}
-		
+
 			if (prevBtn) {
 				e.preventDefault();
 				swiper.slidePrev();
 			}
 		});
 
-		// === Проверка чекбоксов для слайдов с data-count-active ===
 		const slidesWithLimit = swiperEl.querySelectorAll('.swiper-slide[data-count-active]');
 
 		slidesWithLimit.forEach((slide) => {
@@ -698,41 +573,72 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		const update = () => {
 			const count = slide.querySelectorAll('input[type="checkbox"]:checked').length;
-			// "строго больше трёх" → count > limit
 			nextBtn.classList.toggle('is-active', count <= limit);
 		};
 
-		// делегирование change внутри слайда
 		slide.addEventListener('change', (e) => {
 			if (e.target.matches('input[type="checkbox"]')) update();
 		});
 
-		update(); // начальное состояние
+		update();
 		});
 
 	});
 	function updateProgress(swiper, valueEl) {
 		if (!valueEl) return;
-		
+
 		const progress = swiper.progress;
-		// Преобразуем в проценты (от 0 до 100)
 		const percentage = Math.round(progress * 100);
-		
-		// Выводим процент
+
 		valueEl.textContent = percentage + '%';
 	}
-	
-	
+
+
+	//sort field
+	const sortBlocks = document.querySelectorAll('.frm-field-select.js-popup-wrap');
+
+	sortBlocks.forEach(function (block) {
+	  const popupBtn = block.querySelector('.btn-popup');
+	  const popupBtnTitle = block.querySelector('.btn-popup .button-title');
+	  const radioInputs = block.querySelectorAll('input[name="filter-sort"]');
+
+	  function updatePopupTitle() {
+		const checked = block.querySelector('input[name="filter-sort"]:checked');
+		if (checked) {
+		  const label = block.querySelector('label[for="' + checked.id + '"] .button-title');
+		  if (label && popupBtnTitle) {
+			popupBtnTitle.textContent = label.textContent.trim();
+		  }
+		}
+	  }
+
+	  if (!block.querySelector('input[name="filter-sort"]:checked') && radioInputs.length) {
+		radioInputs[0].checked = true;
+	  }
+
+	  updatePopupTitle();
+
+	  radioInputs.forEach(function (input) {
+		input.addEventListener('change', function () {
+		  updatePopupTitle();
+		  if (popupBtn) {
+			popupBtn.classList.remove('active');
+		  }
+		});
+	  });
+	});
+
+
 })
 
 
 //frm field-input
 function checkInputFields() {
 	const formInputs = document.querySelectorAll('.frm-field-input .form-input');
-  
+
 	formInputs.forEach(inputField => {
 	  const frmFieldInput = inputField.closest('.frm-field-input');
-  
+
 	  if (inputField.value.trim() !== '') {
 		frmFieldInput.classList.add('inp-active');
 	  }
@@ -742,7 +648,7 @@ document.addEventListener('input', function(event) {
 	if (event.target.closest('.frm-field-input') && event.target.classList.contains('form-input')) {
 	  const inputField = event.target;
 	  const frmFieldInput = inputField.closest('.frm-field-input');
-  
+
 	  if (inputField.value.length > 0) {
 		frmFieldInput.classList.add('inp-active');
 	  } else {
@@ -753,4 +659,3 @@ document.addEventListener('input', function(event) {
   document.addEventListener('DOMContentLoaded', function() {
 	checkInputFields();
   });
-  

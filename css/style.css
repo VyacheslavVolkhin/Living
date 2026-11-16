@@ -7152,6 +7152,7 @@ html.with-fancybox body.hide-scrollbar {
   font-size: var(--fsize);
   line-height: var(--lhsize);
   color: var(--clr-base);
+  outline: none;
 }
 .form-input.inp-error {
   border-color: var(--clr-alert);
@@ -8029,9 +8030,47 @@ select.form-input:required:invalid {
 }
 .frm-field-select li {
   margin-top: -2px;
+  height: 50px;
 }
 .frm-field-select li:first-child {
   margin-top: 0;
+}
+.frm-field-select li:has(:checked) {
+  display: none;
+}
+.frm-field-select .frm-select-btn {
+  width: 100%;
+}
+.frm-field-select .frm-select-btn input:checked ~ .btn {
+  color: var(--clr-base-white);
+  background: var(--clr-att);
+  border-color: var(--clr-att);
+}
+.frm-field-select .frm-select-btn .btn {
+  min-height: 50px;
+  border-radius: 30px;
+  border-width: 2px;
+  font-size: var(--fsize);
+  font-weight: 500;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+  padding: 0 15px;
+  letter-spacing: normal;
+  height: auto;
+}
+.frm-field-select .frm-select-btn .button-border:not(:hover, .active) {
+  color: #000;
+}
+.frm-field-select .frm-select-btn .button-border.active {
+  background-color: transparent;
+  border-color: var(--clr-att);
+  color: #000;
+}
+.frm-field-select .frm-select-btn .button-border:hover {
+  color: var(--clr-base-white);
+  background: var(--clr-att);
+  border-color: var(--clr-att);
 }
 .frm-field-select .btn {
   min-height: 50px;
@@ -8258,25 +8297,31 @@ select.form-input:required:invalid {
   height: 6rem;
   line-height: 6rem;
 }
-.frm-field-input:has(input:user-invalid:not(:-moz-placeholder)) .form-input {
+.frm-field-input:has(input:user-invalid:not(:-moz-placeholder)) .form-input,
+.frm-field-input:has(input:user-invalid:not(:-moz-placeholder)) textarea.form-input {
   border-color: var(--clr-alert);
 }
-.frm-field-input:has(input:user-invalid:not(:-ms-input-placeholder)) .form-input {
+.frm-field-input:has(input:user-invalid:not(:-ms-input-placeholder)) .form-input,
+.frm-field-input:has(input:user-invalid:not(:-ms-input-placeholder)) textarea.form-input {
   border-color: var(--clr-alert);
 }
-.frm-field-input:has(input:user-invalid:not(:placeholder-shown)) .form-input {
+.frm-field-input:has(input:user-invalid:not(:placeholder-shown)) .form-input,
+.frm-field-input:has(input:user-invalid:not(:placeholder-shown)) textarea.form-input {
   border-color: var(--clr-alert);
 }
-.frm-field-input:has(input:user-invalid:-moz-placeholder) .form-input {
-  border-color: var(--clr-warning);
+.frm-field-input:has(input:user-invalid:-moz-placeholder) .form-input,
+.frm-field-input:has(input:user-invalid:-moz-placeholder) textarea.form-input {
+  border-color: var(--clr-alert);
   letter-spacing: normal;
 }
-.frm-field-input:has(input:user-invalid:-ms-input-placeholder) .form-input {
-  border-color: var(--clr-warning);
+.frm-field-input:has(input:user-invalid:-ms-input-placeholder) .form-input,
+.frm-field-input:has(input:user-invalid:-ms-input-placeholder) textarea.form-input {
+  border-color: var(--clr-alert);
   letter-spacing: normal;
 }
-.frm-field-input:has(input:user-invalid:placeholder-shown) .form-input {
-  border-color: var(--clr-warning);
+.frm-field-input:has(input:user-invalid:placeholder-shown) .form-input,
+.frm-field-input:has(input:user-invalid:placeholder-shown) textarea.form-input {
+  border-color: var(--clr-alert);
   letter-spacing: normal;
 }
 .frm-field-input .field-input-content {
