@@ -3646,7 +3646,9 @@
                 var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
                 if (reduceMotion) {
-                    root.parentNode.removeChild(root);
+                    setTimeout(function () {
+                        if (root.parentNode) root.parentNode.removeChild(root);
+                    }, CONFIG.hideAfter);
                     return;
                 }
 
