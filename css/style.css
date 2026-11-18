@@ -723,6 +723,11 @@ html.with-fancybox body.hide-scrollbar {
   -ms-flex-negative: 0;
   flex-shrink: 0;
 }
+@supports (overflow: clip) {
+  .wrap {
+    overflow: clip;
+  }
+}
 .header,
 .footer,
 .nav {
@@ -770,6 +775,10 @@ html.with-fancybox body.hide-scrollbar {
   letter-spacing: normal;
   background: #fffcf9;
   z-index: 99;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 .header .inner-wrap {
   display: -webkit-box;
